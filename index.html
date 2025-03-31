@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP SSE Client</title>
+</head>
+<body>
+    <h1>MCP SSE Client</h1>
+    <div>
+        <h2>Add Numbers</h2>
+        <input type="number" id="num1" placeholder="First number">
+        <input type="number" id="num2" placeholder="Second number">
+        <button onclick="handleAdd()">Add</button>
+        <p id="addResult"></p>
+    </div>
+    <div>
+        <h2>Get Greeting</h2>
+        <input type="text" id="name" placeholder="Enter name">
+        <button onclick="handleGreeting()">Get Greeting</button>
+        <p id="greetingResult"></p>
+    </div>
+    <div>
+        <h2>SSE Messages</h2>
+        <pre id="sseMessages"></pre>
+    </div>
+
+    <script type="module">
+        import { addNumbers, getGreeting } from './sse_client.js';
+
+        // Set up SSE message display
+        const eventSource = new EventSource('http://localhost:8000/mcp/sse');
+        const sseMessages = document.getElementById('sseMessages');
+        
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            sseMessages.textContent = JSON.stringify(data, null, 2) + '\n' + sseMessages.textContent;
+        };
+
+        // Add numbers handler
+        window.handleAdd = async () => {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const result = await addNumbers(num1, num2);
+            document.getElementById('addResult').textContent = `Result: ${JSON.stringify(result)}`;
+        };
+
+        // Get greeting handler
+        window.handleGreeting = async () => {
+            const name = document.getElementById('name').value;
+            const result = await getGreeting(name);
+            document.getElementById('greetingResult').textContent = `Result: ${JSON.stringify(result)}`;
+        };
+    </script>
+</body>
+</html> 
