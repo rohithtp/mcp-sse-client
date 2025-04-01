@@ -21,12 +21,18 @@
         <p id="greetingResult"></p>
     </div>
     <div>
+        <h2>Get Metrics</h2>
+        <input type="text" id="metricsQuestion" placeholder="Enter your metrics question">
+        <button onclick="handleMetrics()">Get Metrics</button>
+        <pre id="metricsResult"></pre>
+    </div>
+    <div>
         <h2>SSE Messages</h2>
         <pre id="sseMessages"></pre>
     </div>
 
     <script type="module">
-        import { addNumbers, getGreeting } from './sse_client.js';
+        import { addNumbers, getGreeting, getMetrics } from './sse_client.js';
 
         // Set up SSE message display
         const eventSource = new EventSource('http://localhost:8000/mcp/sse');
@@ -50,6 +56,17 @@
             const name = document.getElementById('name').value;
             const result = await getGreeting(name);
             document.getElementById('greetingResult').textContent = `Result: ${JSON.stringify(result)}`;
+        };
+
+        // Get metrics handler
+        window.handleMetrics = async () => {
+            const question = document.getElementById('metricsQuestion').value;
+            try {
+                const result = await getMetrics(question);
+                document.getElementById('metricsResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('metricsResult').textContent = `Error: ${error.message}`;
+            }
         };
     </script>
 </body>

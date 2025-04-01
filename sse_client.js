@@ -39,4 +39,22 @@ export async function getGreeting(name) {
         })
     });
     return await response.json();
+}
+
+// Get metrics based on a question
+export async function getMetrics(question) {
+    const response = await fetch('http://localhost:8000/mcp/messages', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: 'request',
+            action: 'execute',
+            tool: 'get_metrics',
+            data: { question }
+        })
+    });
+    const result = await response.json();
+    return result.data;  // Returns the metrics object
 } 
